@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produce Solutions — Inventario de Hoy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@500;600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#16301F;
+    --bg-panel:#1F3D28;
+    --bg-panel-2:#264A31;
+    --cream:#F6F1E4;
+    --muted:#AABEA9;
+    --citrus:#F2994A;
+    --citrus-dark:#7A3E14;
+    --stamp:#C1443C;
+    --line: rgba(246,241,228,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg-deep);
+    color:var(--cream);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:28px 20px 60px;
+  }
+  header{
+    position:relative;
+    padding-top:8px;
+    margin-bottom:34px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 10px;
+  }
+  h1{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    font-size:44px;
+    line-height:0.95;
+    letter-spacing:0.01em;
+    margin:0 0 12px;
+    color:var(--cream);
+  }
+  h1 span{color:var(--citrus);}
+  .sub{
+    font-size:15px;
+    line-height:1.5;
+    color:var(--muted);
+    margin:0;
+    max-width:38ch;
+  }
+  .stamp{
+    position:absolute;
+    top:-6px;
+    right:0;
+    width:104px;
+    height:104px;
+    transform:rotate(-9deg);
+    mix-blend-mode:screen;
+    opacity:0.92;
+  }
+  .stamp svg{width:100%;height:100%;display:block;}
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-top:8px;
+  }
+  .card{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    position:relative;
+  }
+  .card .photo{
+    width:100%;
+    aspect-ratio:1/1;
+    object-fit:cover;
+    display:block;
+    background:var(--bg-panel-2);
+  }
+  .card .photo.placeholder{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--muted);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    text-align:center;
+    padding:12px;
+  }
+  .tag{
+    padding:10px 12px 12px;
+  }
+  .tag .name{
+    font-size:14px;
+    font-weight:600;
+    line-height:1.25;
+    margin:0 0 4px;
+    color:var(--cream);
+  }
+  .tag .note{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--citrus);
+    margin:0;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+  }
+  .cta{
+    margin-top:30px;
+    padding:16px 18px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .cta p{
+    margin:0;
+    font-size:13.5px;
+    line-height:1.45;
+    color:var(--muted);
+  }
+  .cta strong{color:var(--cream);}
+  footer{
+    margin-top:40px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--muted);
+    letter-spacing:0.03em;
+  }
+  .empty{
+    padding:40px 20px;
+    text-align:center;
+    color:var(--muted);
+    font-size:14px;
+  }
+  @media (min-width:480px){
+    h1{font-size:52px;}
+    .grid{grid-template-columns:repeat(3, 1fr);}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="stamp" aria-hidden="true">
+      <svg viewBox="0 0 120 120">
+        <defs>
+          <path id="arc" d="M 60 60 m -46 0 a 46 46 0 1 1 92 0 a 46 46 0 1 1 -92 0" />
+        </defs>
+        <circle cx="60" cy="60" r="46" fill="none" stroke="#C1443C" stroke-width="2.5" stroke-dasharray="3 4"/>
+        <circle cx="60" cy="60" r="37" fill="none" stroke="#C1443C" stroke-width="1"/>
+        <text font-family="IBM Plex Mono, monospace" font-size="8.2" font-weight="600" fill="#C1443C" letter-spacing="2.2">
+          <textPath href="#arc" startOffset="2%">PRODUCE SOLUTIONS · MCALLEN TX ·</textPath>
+        </text>
+        <text x="60" y="57" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" fill="#C1443C" id="stampDay"></text>
+        <text x="60" y="72" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7.5" fill="#C1443C" letter-spacing="1.5" id="stampMonth"></text>
+      </svg>
+    </div>
+    <p class="eyebrow" id="fechaTexto">Cargando fecha…</p>
+    <h1>En piso<br><span>hoy</span></h1>
+    <p class="sub">Esto es lo que tenemos fresco en bodega ahorita. Mándanos el nombre del producto y te cotizamos al momento.</p>
+  </header>
+
+  <div id="grid" class="grid"></div>
+  <div id="emptyState" class="empty" style="display:none;">Todavía no hay fotos cargadas para hoy. Contáctanos y con gusto te decimos qué tenemos disponible.</div>
+
+  <div class="cta">
+    <p>¿Buscas algo que no ves aquí? <strong>Escríbenos</strong> y te decimos si lo tenemos en bodega.</p>
+  </div>
+
+  <footer>
+    PRODUCE SOLUTIONS LLC · BODEGA MCALLEN, TX · ACTUALIZADO CADA MAÑANA
+  </footer>
+</div>
+
+<script>
+  const MESES = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+  const DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+
+  fetch('hoy.json?t=' + Date.now())
+    .then(r => r.json())
+    .then(data => {
+      const grid = document.getElementById('grid');
+      const empty = document.getElementById('emptyState');
+      const productos = (data && data.productos) || [];
+
+      let fecha = new Date();
+      if (data && data.fecha) {
+        const parsed = new Date(data.fecha + 'T12:00:00');
+        if (!isNaN(parsed)) fecha = parsed;
+      }
+      document.getElementById('fechaTexto').textContent =
+        DIAS[fecha.getDay()].charAt(0).toUpperCase() + DIAS[fecha.getDay()].slice(1) + ' · ' + fecha.getDate() + ' ' + MESES[fecha.getMonth()];
+      document.getElementById('stampDay').textContent = String(fecha.getDate()).padStart(2,'0');
+      document.getElementById('stampMonth').textContent = MESES[fecha.getMonth()] + ' ' + fecha.getFullYear();
+
+      if (!productos.length) {
+        empty.style.display = 'block';
+        return;
+      }
+
+      grid.innerHTML = productos.map(p => `
+        <div class="card">
+          ${p.imagen
+            ? `<img class="photo" src="${p.imagen}" alt="${p.nombre}" loading="lazy" onerror="this.outerHTML='<div class=&quot;photo placeholder&quot;>Foto pendiente</div>'">`
+            : `<div class="photo placeholder">Foto pendiente</div>`}
+          <div class="tag">
+            <p class="name">${p.nombre}</p>
+            ${p.nota ? `<p class="note">${p.nota}</p>` : ''}
+          </div>
+        </div>
+      `).join('');
+    })
+    .catch(() => {
+      document.getElementById('emptyState').style.display = 'block';
+      document.getElementById('fechaTexto').textContent = 'Inventario de hoy';
+    });
+</script>
+</body>
+</html>

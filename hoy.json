@@ -1,0 +1,20 @@
+{
+  "fecha": "2026-07-02",
+  "productos": [
+    {
+      "nombre": "Mango Ataulfo",
+      "imagen": "images/mango-ataulfo.jpg",
+      "nota": "Recién llegado"
+    },
+    {
+      "nombre": "Piña 5 CT",
+      "imagen": "images/pina.jpg",
+      "nota": ""
+    },
+    {
+      "nombre": "Tuna (fruto del cactus)",
+      "imagen": "images/tuna.jpg",
+      "nota": "Buen precio hoy"
+    }
+  ]
+}
