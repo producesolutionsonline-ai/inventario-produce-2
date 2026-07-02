@@ -197,44 +197,69 @@
 <script>
   const MESES = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
   const DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const OWNER = 'producesolutionsonline-ai';
+  const REPO = 'inventario-produce-2';
+  const IMG_EXT = ['jpg','jpeg','png','webp','gif'];
+
+  function nombreDesdeArchivo(filename){
+    const sinExt = filename.replace(/\.[^/.]+$/, '');
+    const limpio = sinExt.replace(/[-_]+/g, ' ').trim();
+    return limpio.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+  }
+
+  function pintarFecha(notas){
+    let fecha = new Date();
+    if (notas && notas.fecha) {
+      const parsed = new Date(notas.fecha + 'T12:00:00');
+      if (!isNaN(parsed)) fecha = parsed;
+    }
+    document.getElementById('fechaTexto').textContent =
+      DIAS[fecha.getDay()].charAt(0).toUpperCase() + DIAS[fecha.getDay()].slice(1) + ' · ' + fecha.getDate() + ' ' + MESES[fecha.getMonth()];
+    document.getElementById('stampDay').textContent = String(fecha.getDate()).padStart(2,'0');
+    document.getElementById('stampMonth').textContent = MESES[fecha.getMonth()] + ' ' + fecha.getFullYear();
+  }
 
   fetch('hoy.json?t=' + Date.now())
-    .then(r => r.json())
-    .then(data => {
-      const grid = document.getElementById('grid');
-      const empty = document.getElementById('emptyState');
-      const productos = (data && data.productos) || [];
+    .then(r => r.ok ? r.json() : {})
+    .catch(() => ({}))
+    .then(notas => {
+      pintarFecha(notas);
+      const notasPorArchivo = (notas && notas.notas) || {};
 
-      let fecha = new Date();
-      if (data && data.fecha) {
-        const parsed = new Date(data.fecha + 'T12:00:00');
-        if (!isNaN(parsed)) fecha = parsed;
-      }
-      document.getElementById('fechaTexto').textContent =
-        DIAS[fecha.getDay()].charAt(0).toUpperCase() + DIAS[fecha.getDay()].slice(1) + ' · ' + fecha.getDate() + ' ' + MESES[fecha.getMonth()];
-      document.getElementById('stampDay').textContent = String(fecha.getDate()).padStart(2,'0');
-      document.getElementById('stampMonth').textContent = MESES[fecha.getMonth()] + ' ' + fecha.getFullYear();
+      fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/images?t=` + Date.now())
+        .then(r => r.json())
+        .then(files => {
+          const grid = document.getElementById('grid');
+          const empty = document.getElementById('emptyState');
 
-      if (!productos.length) {
-        empty.style.display = 'block';
-        return;
-      }
+          if (!Array.isArray(files)) throw new Error('no folder');
 
-      grid.innerHTML = productos.map(p => `
-        <div class="card">
-          ${p.imagen
-            ? `<img class="photo" src="${p.imagen}" alt="${p.nombre}" loading="lazy" onerror="this.outerHTML='<div class=&quot;photo placeholder&quot;>Foto pendiente</div>'">`
-            : `<div class="photo placeholder">Foto pendiente</div>`}
-          <div class="tag">
-            <p class="name">${p.nombre}</p>
-            ${p.nota ? `<p class="note">${p.nota}</p>` : ''}
-          </div>
-        </div>
-      `).join('');
-    })
-    .catch(() => {
-      document.getElementById('emptyState').style.display = 'block';
-      document.getElementById('fechaTexto').textContent = 'Inventario de hoy';
+          const fotos = files.filter(f =>
+            f.type === 'file' && IMG_EXT.includes((f.name.split('.').pop() || '').toLowerCase())
+          );
+
+          if (!fotos.length) {
+            empty.style.display = 'block';
+            return;
+          }
+
+          grid.innerHTML = fotos.map(f => {
+            const nombre = nombreDesdeArchivo(f.name);
+            const nota = notasPorArchivo[f.name] || '';
+            return `
+              <div class="card">
+                <img class="photo" src="${f.download_url}" alt="${nombre}" loading="lazy" onerror="this.outerHTML='<div class=&quot;photo placeholder&quot;>Foto pendiente</div>'">
+                <div class="tag">
+                  <p class="name">${nombre}</p>
+                  ${nota ? `<p class="note">${nota}</p>` : ''}
+                </div>
+              </div>
+            `;
+          }).join('');
+        })
+        .catch(() => {
+          document.getElementById('emptyState').style.display = 'block';
+        });
     });
 </script>
 </body>

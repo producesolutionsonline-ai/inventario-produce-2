@@ -1,10 +1,6 @@
 {
   "fecha": "2026-07-02",
-  "productos": [
-    {
-      "nombre": "Limón Persa",
-      "imagen": "images/limes.jpg",
-      "nota": "Recién llegado"
-    }
-  ]
+  "notas": {
+    "limes.jpg": "Recién llegado"
+  }
 }
