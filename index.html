@@ -226,16 +226,14 @@
       pintarFecha(notas);
       const notasPorArchivo = (notas && notas.notas) || {};
 
-      fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/images?t=` + Date.now())
+      fetch('manifest.json?t=' + Date.now())
         .then(r => r.json())
-        .then(files => {
+        .then(archivos => {
           const grid = document.getElementById('grid');
           const empty = document.getElementById('emptyState');
 
-          if (!Array.isArray(files)) throw new Error('no folder');
-
-          const fotos = files.filter(f =>
-            f.type === 'file' && IMG_EXT.includes((f.name.split('.').pop() || '').toLowerCase())
+          const fotos = (archivos || []).filter(nombre =>
+            IMG_EXT.includes((nombre.split('.').pop() || '').toLowerCase())
           );
 
           if (!fotos.length) {
@@ -243,12 +241,12 @@
             return;
           }
 
-          grid.innerHTML = fotos.map(f => {
-            const nombre = nombreDesdeArchivo(f.name);
-            const nota = notasPorArchivo[f.name] || '';
+          grid.innerHTML = fotos.map(archivo => {
+            const nombre = nombreDesdeArchivo(archivo);
+            const nota = notasPorArchivo[archivo] || '';
             return `
               <div class="card">
-                <img class="photo" src="${f.download_url}" alt="${nombre}" loading="lazy" onerror="this.outerHTML='<div class=&quot;photo placeholder&quot;>Foto pendiente</div>'">
+                <img class="photo" src="images/${archivo}" alt="${nombre}" loading="lazy" onerror="this.outerHTML='<div class=&quot;photo placeholder&quot;>Foto pendiente</div>'">
                 <div class="tag">
                   <p class="name">${nombre}</p>
                   ${nota ? `<p class="note">${nota}</p>` : ''}
